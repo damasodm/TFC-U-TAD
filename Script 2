@@ -1,0 +1,162 @@
+# Hay 23 variables no numéricas que son NA vamos a ir una por una y a codificarlas
+
+
+
+sort(names(NoNnumericNaVar))
+
+
+###############################################################################
+#1
+NoNnumericVar$Alley[is.na(NoNnumericVar$Alley)] <- 'None'
+NoNnumericVar$Alley <- as.factor(NoNnumericVar$Alley)
+table(NoNnumericVar$Alley)
+
+#2
+NoNnumericVar$BsmtCond[is.na(NoNnumericVar$BsmtCond)] <- 'None'
+# Ex   Excellent (100+ inches) 
+# Gd   Good (90-99 inches)
+# TA   Typical (80-89 inches)
+# Fa   Fair (70-79 inches)
+# Po   Poor (<70 inches
+# NA   No Basement
+Qualities <- c('None' = 0, 'Po' = 1, 'Fa' = 2, 'TA' = 3, 'Gd' = 4, 'Ex' = 5)
+NoNnumericVar$BsmtCond<-as.integer(revalue(NoNnumericVar$BsmtCond, Qualities))
+table(NoNnumericVar$BsmtCond)
+
+
+#3
+NoNnumericVar$BsmtExposure[is.na(NoNnumericVar$BsmtExposure)] <- 'None'
+# Gd   Good Exposure
+# Av   Average Exposure (split levels or foyers typically score average or above)  
+# Mn   Mimimum Exposure
+# No   No Exposure
+# NA   No Basement
+Exposure <- c('None'=0, 'No'=1, 'Mn'=2, 'Av'=3, 'Gd'=4)
+NoNnumericVar$BsmtExposure<-as.integer(revalue(NoNnumericVar$BsmtExposure, Exposure))
+table(NoNnumericVar$BsmtExposure)
+
+
+#4
+NoNnumericVar$BsmtFinType1[is.na(NoNnumericVar$BsmtFinType1)] <- 'None'
+# GLQ  Good Living Quarters
+# ALQ  Average Living Quarters
+# BLQ  Below Average Living Quarters   
+# Rec  Average Rec Room
+# LwQ  Low Quality
+# Unf  Unfinshed
+# NA   No Basement
+FinType <- c('None'=0, 'Unf'=1, 'LwQ'=2, 'Rec'=3, 'BLQ'=4, 'ALQ'=5, 'GLQ'=6)
+NoNnumericVar$BsmtFinType1<-as.integer(revalue(NoNnumericVar$BsmtFinType1, FinType))
+table(NoNnumericVar$BsmtFinType1)
+
+#5
+NoNnumericVar$BsmtFinType2[is.na(NoNnumericVar$BsmtFinType2)] <- 'None'
+# GLQ  Good Living Quarters
+# ALQ  Average Living Quarters
+# BLQ  Below Average Living Quarters   
+# Rec  Average Rec Room
+# LwQ  Low Quality
+# Unf  Unfinshed
+# NA   No Basement
+FinType <- c('None'=0, 'Unf'=1, 'LwQ'=2, 'Rec'=3, 'BLQ'=4, 'ALQ'=5, 'GLQ'=6)
+NoNnumericVar$BsmtFinType2<-as.integer(revalue(NoNnumericVar$BsmtFinType2, FinType))
+table(NoNnumericVar$BsmtFinType2)
+
+#6
+NoNnumericVar$BsmtQual[is.na(NoNnumericVar$BsmtQual)] <- 'None'
+Qualities <- c('None' = 0, 'Po' = 1, 'Fa' = 2, 'TA' = 3, 'Gd' = 4, 'Ex' = 5)
+NoNnumericVar$BsmtQual<-as.integer(revalue(NoNnumericVar$BsmtQual, Qualities))
+table(NoNnumericVar$BsmtQual)
+
+#7
+NoNnumericVar$Electrical[is.na(NoNnumericVar$Electrical)] <- Mode(NoNnumericVar$Electrica)
+NoNnumericVar$Electrical <- as.factor(NoNnumericVar$Electrical)
+table(NoNnumericVar$Electrical)
+
+#8
+NoNnumericVar$Exterior1st[is.na(NoNnumericVar$Exterior1st)] <- Mode(NoNnumericVar$Exterior1st)
+NoNnumericVar$Exterior1st <- as.factor(NoNnumericVar$Exterior1st)
+table(NoNnumericVar$Exterior1st)
+
+#9
+NoNnumericVar$Exterior2nd[is.na(NoNnumericVar$Exterior2nd)] <- Mode(NoNnumericVar$Exterior2nd)
+NoNnumericVar$Exterior2nd <- as.factor(NoNnumericVar$Exterior2nd)
+table(NoNnumericVar$Exterior2nd)
+
+#10
+NoNnumericVar$Fence[is.na(all$Fence)] <- 'None'
+table(NoNnumericVar$Fence)
+NoNnumericVar$Fence <- as.factor(NoNnumericVar$Fence)
+
+#11
+NoNnumericVar$FireplaceQu[is.na(NoNnumericVar$FireplaceQu)] <- 'None'
+NoNnumericVar$FireplaceQu<-as.integer(revalue(NoNnumericVar$FireplaceQu, Qualities))
+table(NoNnumericVar$FireplaceQu)
+
+#12
+NoNnumericVar$Functional[is.na(NoNnumericVar$Functional)] <- Mode(NoNnumericVar$Functional)
+NoNnumericVar$Functional <- as.integer(revalue(NoNnumericVar$Functional, c('Sal'=0, 'Sev'=1, 'Maj2'=2, 'Maj1'=3, 'Mod'=4, 'Min2'=5, 'Min1'=6, 'Typ'=7)))
+table(NoNnumericVar$Functional)
+
+
+
+#13
+NoNnumericVar$GarageCond[is.na(NoNnumericVar$GarageCond)] <- 'None'
+Qualities <- c('None' = 0, 'Po' = 1, 'Fa' = 2, 'TA' = 3, 'Gd' = 4, 'Ex' = 5)
+NoNnumericVar$GarageCond<-as.integer(revalue(NoNnumericVar$GarageCond, Qualities))
+table(NoNnumericVar$GarageCond)
+
+#14
+NoNnumericVar$GarageFinish[is.na(NoNnumericVar$GarageFinish)] <- 'None'
+Finish <- c('None'=0, 'Unf'=1, 'RFn'=2, 'Fin'=3)
+NoNnumericVar$GarageFinish<-as.integer(revalue(NoNnumericVar$GarageFinish, Finish))
+table(NoNnumericVar$GarageFinish)
+
+#15
+NoNnumericVar$GarageQual[is.na(NoNnumericVar$GarageQual)] <- 'None'
+Qualities <- c('None' = 0, 'Po' = 1, 'Fa' = 2, 'TA' = 3, 'Gd' = 4, 'Ex' = 5)
+NoNnumericVar$GarageQual<-as.integer(revalue(NoNnumericVar$GarageQual, Qualities))
+table(NoNnumericVar$GarageQual)
+
+#16
+NoNnumericVar$GarageType[is.na(NoNnumericVar$GarageType)] <- 'None'
+NoNnumericVar$GarageType <- as.factor(NoNnumericVar$GarageType)
+table(NoNnumericVar$GarageType)
+
+#17
+NoNnumericVar$KitchenQual[is.na(NoNnumericVar$KitchenQual)] <- Mode(NoNnumericVar$KitchenQual)
+NoNnumericVar$KitchenQual<-as.integer(revalue(NoNnumericVar$KitchenQual, Qualities))
+table(NoNnumericVar$KitchenQual)
+
+#18
+NoNnumericVar$MasVnrType[is.na(NoNnumericVar$MasVnrType)] <- 'None'
+Masonry <- c('None'=0, 'BrkCmn'=0, 'BrkFace'=1, 'Stone'=2)
+NoNnumericVar$MasVnrType<-as.integer(revalue(NoNnumericVar$MasVnrType, Masonry))
+table(NoNnumericVar$MasVnrType)
+
+#19
+NoNnumericVar$MiscFeature[is.na(NoNnumericVar$MiscFeature)] <- 'None'
+NoNnumericVar$MiscFeature <- as.factor(NoNnumericVar$MiscFeature)
+table(NoNnumericVar$MiscFeature)
+
+#20
+NoNnumericVar$MSZoning[is.na(NoNnumericVar$MSZoning)] <- Mode(NoNnumericVar$MSZoning)
+NoNnumericVar$MSZoning <- as.factor(NoNnumericVar$MSZoning)
+table(NoNnumericVar$MSZoning)
+
+#21
+NoNnumericVar$PoolQC[is.na(NoNnumericVar$PoolQC)] <- 'None'
+Qualities <- c('None' = 0,  'Fa' = 2,  'Gd' = 4, 'Ex' = 5)
+NoNnumericVar$PoolQC<-as.integer(revalue(NoNnumericVar$PoolQC, Qualities))
+table(NoNnumericVar$PoolQC)
+
+#22
+NoNnumericVar$SaleType[is.na(NoNnumericVar$SaleType)] <- Mode(NoNnumericVar$SaleType)
+NoNnumericVar$SaleType <- as.factor(NoNnumericVar$SaleType)
+table(NoNnumericVar$SaleType)
+
+#23
+table(NoNnumericVar$Utilities)
+which(is.na(NoNnumericVar$Utilities))
+# En test todas trendrían el mismo valor es una mierda de variable
+NoNnumericVar$Utilities <- NULL
