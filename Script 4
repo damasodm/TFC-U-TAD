@@ -1,0 +1,123 @@
+
+numericVar$SalePrice <- all$SalePrice
+
+
+
+#rm(all_new) esta línea es por si ejecutamos varias veces el script
+all_new <- cbind(numericVar,NoNnumericVar)
+
+NoNnumericVar2 <- all_new[sapply(all_new,function(x)any(is.numeric(x)))]
+length(NoNnumericVar2)      
+
+# Vemos cuáles no son numéricas y cuales son factor
+Charcol <- names(all_new[,sapply(all_new, is.character)])
+length(Charcol)
+
+
+
+
+all_new$Street <- as.factor(all_new$Street)
+all_new$LotShape <- as.factor(all_new$LotShape)
+all_new$LandContour <- as.factor(all_new$LandContour)
+all_new$LotConfig <- as.factor(all_new$LotConfig)
+all_new$LandSlope <- as.factor(all_new$LandSlope)
+all_new$Neighborhood <- as.factor(all_new$Neighborhood)
+all_new$Condition1 <- as.factor(all_new$Condition1)
+all_new$Condition2 <- as.factor(all_new$Condition2)
+all_new$BldgType <- as.factor(all_new$BldgType)
+all_new$HouseStyle <- as.factor(all_new$HouseStyle)
+all_new$RoofStyle <- as.factor(all_new$RoofStyle)
+all_new$RoofMatl <- as.factor(all_new$RoofMatl)
+all_new$ExterQual <- as.factor(all_new$ExterQual)
+all_new$ExterCond <- as.factor(all_new$ExterCond)
+all_new$Foundation <- as.factor(all_new$Foundation)
+all_new$Heating <- as.factor(all_new$Heating)
+all_new$HeatingQC <- as.factor(all_new$HeatingQC)
+all_new$CentralAir <- as.factor(all_new$CentralAir)
+all_new$GarageCond <- as.factor(all_new$GarageCond)
+all_new$PavedDrive <- as.factor(all_new$PavedDrive)
+all_new$SaleCondition <- as.factor(all_new$SaleCondition)
+
+all_new$MoSold <- as.factor(all_new$MoSold)
+all_new$MSSubClass <- as.factor(all_new$MSSubClass)
+
+all_new$TotalSF = all_new$TotalBsmtSF + all_new$X1stFlrSF + all_new$X2ndFlrSF
+
+all_new$Remod <- ifelse(all_new$YearBuilt==all_new$YearRemodAdd, 0, 1) #0=No Remodeling, 1=Remodeling
+all_new$Age <- as.numeric(all_new$YrSold)-all_new$YearRemodAdd
+all_new$IsNew <- ifelse(all_new$YrSold==all_new$YearBuilt, 1, 0)
+table(all_new$IsNew)
+
+all_new$YrSold <- as.factor(all_new$YrSold)
+
+dropVars <- c('YearRemodAdd', 'GarageYrBlt', 'GarageArea', 'GarageCond', 'TotalBsmtSF', 'TotRmsAbvGrd', 'BsmtFinSF1')
+all_new <- all_new[,!(names(all_new) %in% dropVars)]
+
+
+# all_new$TotalSF = all_new$TotalBsmtSF + all_new$X1stFlrSF + all_new$X2ndFlrSF
+
+Numerics <- all_new[,sapply(all_new, is.numeric)]
+Factors <- all_new[,sapply(all_new, is.factor)]
+length(Factors)+length(Numerics)
+
+
+
+names(all_new)
+
+# Preparamos las variables dummies
+DFdummies <- as.data.frame(model.matrix(~., Factors))
+length(DFdummies)
+
+ZerocolTest <- which(colSums(DFdummies[(nrow(all[!is.na(all$SalePrice),])+1):nrow(all),])==0)
+colnames(DFdummies[ZerocolTest])
+DFdummies <- DFdummies[,-ZerocolTest]
+
+ZerocolTrain <- which(colSums(DFdummies[1:nrow(all[!is.na(all$SalePrice),]),])==0)
+colnames(DFdummies[ZerocolTrain])
+DFdummies <- DFdummies[,-ZerocolTrain]
+
+
+fewOnes <- which(colSums(DFdummies[1:nrow(all[!is.na(all$SalePrice),]),])<10)
+colnames(DFdummies[fewOnes])
+DFdummies <- DFdummies[,-fewOnes]
+
+
+
+# Preparamos el nuevo dataset
+new_dataset <- cbind(Numerics,DFdummies)
+sort(names(new_dataset))
+new_dataset$`(Intercept)` <- NULL
+dim(new_dataset)
+
+sapply(new_dataset,function(x)any(is.numeric(x)))
+new_dataset$tt <- all$tt
+
+
+# Ponemso a SalePrice la primera
+new_dataset <- new_dataset[,c("SalePrice",setdiff(names(new_dataset), "SalePrice"))]
+new_dataset <- as.data.table(new_dataset)
+new_dataset$SalePrice
+
+
+train_dataset <- new_dataset[tt=='train',]
+train_dataset$tt <- NULL
+dim(train_dataset)
+
+
+
+# ggplot(data=train_dataset, aes(x=SalePrice)) +
+#   geom_histogram(fill="blue", binwidth = 10000) +
+#   scale_x_continuous(breaks= seq(0, 800000, by=100000))
+
+train_dataset$SalePrice <- log(train_dataset$SalePrice)
+skewness(train_dataset$SalePrice)
+
+
+
+test_dataset <- new_dataset[tt=='test',]
+test_dataset$tt <- NULL
+nrow(test_dataset)
+
+
+fwrite(train_dataset,file="train_dataset.csv",sep=",", col.names=T)
+fwrite(test_dataset,file="test_dataset.csv",sep=",", col.names=T)
