@@ -1,0 +1,176 @@
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x))) 
+}
+
+
+
+CentScal <- function(datos) {
+  datos <- data.frame(datos)
+  preprocessParams <- preProcess(datos, method=c("range"))
+  transformed <- predict(preprocessParams, datos)
+  result <- transformed
+}
+
+# Preparamos una función para aplicar el método BoxCox
+Metboxcox <- function(datos) {
+  datos <- data.frame(datos)
+  preprocessParams <- preProcess(datos, method=c("BoxCox"))
+  transformed <- predict(preprocessParams, datos)
+  result <- transformed
+  
+}
+
+expoTrans <- function(datos) {
+  datos <- data.frame(datos)
+  preprocessParams <- preProcess(datos, method=c("expoTrans"))
+  transformed <- predict(preprocessParams, datos)
+  result <- transformed
+  
+}
+
+
+YeoJohnson <- function(datos) {
+  datos <- data.frame(datos)
+  preprocessParams <- preProcess(datos, method=c("YeoJohnson"))
+  transformed <- predict(preprocessParams, datos)
+  result <- transformed
+  
+}
+
+Spatial <- function(datos) {
+  datos <- data.frame(datos)
+  centerScale <- preProcess(datos, method = c("center", "scale"))
+  csData <- predict(centerScale, newdata = datos)
+  ssData <- spatialSign(csData)
+  result <- ssData
+  
+}
+
+FindOutliers2 <- function(datos) {
+  
+  boxplot(datos)
+  result <- boxplot.stats(datos)$out
+  
+}
+
+
+colnames(numericVar)
+
+
+
+
+
+# #LotFrontage
+# ggplot(data=numericVar, aes(x=LotFrontage)) +
+#   geom_histogram(fill="blue", binwidth = 10)
+# summary(numericVar)
+# skewness(numericVar$LotFrontage)
+# kurtosis(numericVar$LotFrontage)
+# 
+# transformed<-YeoJohnson(numericVar$LotFrontage)
+# str(transformed)
+# par(mfrow=c(1,2))
+# hist(numericVar$LotFrontage)
+# hist(transformed$datos)
+# skewness(transformed$datos)
+# numericVar$LotFrontage <- transformed$datos
+# 
+# 
+# 
+# 
+# #LotArea
+# ggplot(data=numericVar, aes(x=LotArea)) +
+#   geom_histogram(fill="blue", binwidth = 1000)
+# summary(numericVar$LotArea)
+# skewness(numericVar$LotArea)
+# table(numericVar$LotArea)
+# 
+# transformed<-YeoJohnson(numericVar$LotArea)
+# str(transformed)
+# par(mfrow=c(1,2))
+# hist(numericVar$LotArea)
+# hist(transformed$datos)
+# skewness(transformed$datos)
+# numericVar$LotArea <- transformed$datos
+# 
+# 
+# #OverallQual
+# ggplot(data=numericVar, aes(x=OverallQual)) +
+#   geom_histogram(fill="blue", binwidth = 1)
+# summary(numericVar$OverallQual)
+# skewness(numericVar$OverallQual)
+# kurtosis(numericVar$OverallQual)
+# 
+# transformed<-YeoJohnson(numericVar$OverallQual)
+# str(transformed)
+# par(mfrow=c(1,2))
+# hist(numericVar$OverallQual)
+# hist(transformed$datos)
+# skewness(transformed$datos)
+# numericVar$OverallQual <- transformed$datos
+# 
+# #OverallCond
+# ggplot(data=numericVar, aes(x=OverallCond)) +
+#   geom_histogram(fill="blue", binwidth = 1)
+# summary(numericVar$OverallCond)
+# skewness(numericVar$OverallCond)
+# kurtosis(numericVar$OverallCond)
+# 
+# transformed<-YeoJohnson(numericVar$OverallCond)
+# str(transformed)
+# par(mfrow=c(1,2))
+# hist(numericVar$OverallCond)
+# hist(transformed$datos)
+# skewness(transformed$datos)
+# numericVar$OverallCond <- transformed$datos
+# 
+# datos_graf <-  as.data.table(numericVar)
+# setDT(datos_graf)[, id := .I]
+# 
+# ggplot(data = melt(datos_graf,id.vars='id'), mapping = aes(x = value)) + 
+#   geom_histogram(bins = 10,color='blue') + facet_wrap(~variable, scales = 'free_x')
+
+
+for(i in 1:ncol(numericVar)){
+        if (abs(skew(numericVar[,i]))>0.75){
+                cat(' ',colnames(numericVar)[i] )
+                transformed<-YeoJohnson(numericVar[,i])
+                numericVar[,i] <- transformed$datos
+        }
+}
+
+# ggplot(data = melt(datos_graf,id.vars='id'), mapping = aes(x = value)) + 
+#   geom_histogram(bins = 10,color='blue') + facet_wrap(~variable, scales = 'free_x')
+# 
+# datos_graf <-  numericVar
+# setDT(datos_graf)[, id := .I]
+# 
+# ggplot(data = melt(datos_graf,id.vars='id'), mapping = aes(x = value)) + 
+#   geom_histogram(bins = 10,color='blue') + facet_wrap(~variable, scales = 'free_x')
+
+# 
+# # names(numericVar) 
+# # 
+# # OverallQual
+# # GrLivArea
+# # GarageCars
+# # GarageArea
+# # TotalBsmtSF
+# # X1stFlrSF
+# # FullBath
+# # TotRmsAbvGrd
+# # Fireplaces
+# # MasVnrArea
+# # BsmtFinSF1
+# # LotFrontage
+# # WoodDeckSF
+# # OpenPorchSF
+# # X2ndFlrSF
+# numericVar$OverallQual_2 <- numericVar$OverallQual**2
+# numericVar$GrLivArea_2 <- numericVar$GrLivArea**2
+# numericVar$GarageCars_2 <- numericVar$GarageCars**2
+# numericVar$TotalBsmtSF_2 <- numericVar$GarageArea**2
+# numericVar$X1stFlrSF_2 <- numericVar$X1stFlrSF**2
+# numericVar$FullBath_2 <- numericVar$FullBath**2
+# numericVar$TotRmsAbvGrd_2 <- numericVar$TotRmsAbvGrd**2
+# numericVar$Fireplaces_2 <- numericVar$Fireplaces**2
